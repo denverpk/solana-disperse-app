@@ -19,15 +19,18 @@ export default async function handler(req, res) {
 
     const transaction = new Transaction();
 
-    recipients.forEach((address) => {
-      transaction.add(
-        SystemProgram.transfer({
-          fromPubkey: sender.publicKey,
-          toPubkey: new PublicKey(address),
-          lamports: parseFloat(amount) * 1e9
-        })
-      );
-    });
+    for (let recipient of recipients) {
+  const instruction = SystemProgram.transfer({
+    fromPubkey: sender.publicKey,
+    toPubkey: new PublicKey(recipient),
+    lamports: Math.floor(parseFloat(amount) * 1e9),
+  });
+
+  const tx = new Transaction().add(instruction);
+  const signature = await sendAndConfirmTransaction(connection, tx, [sender]);
+  console.log(`Sent to ${recipient}: ${signature}`);
+}
+
 
     const signature = await sendAndConfirmTransaction(connection, transaction, [sender]);
     res.status(200).json({ signature });
