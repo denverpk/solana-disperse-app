@@ -17,9 +17,7 @@ export default async function handler(req, res) {
 ]); // Replace with private key array
     const sender = Keypair.fromSecretKey(secretKey);
 
-    const transaction = new Transaction();
-
-    for (let recipient of recipients) {
+for (let recipient of recipients) {
   const instruction = SystemProgram.transfer({
     fromPubkey: sender.publicKey,
     toPubkey: new PublicKey(recipient),
@@ -28,8 +26,10 @@ export default async function handler(req, res) {
 
   const tx = new Transaction().add(instruction);
   const signature = await sendAndConfirmTransaction(connection, tx, [sender]);
+
   console.log(`Sent to ${recipient}: ${signature}`);
 }
+
 
 
     const signature = await sendAndConfirmTransaction(connection, transaction, [sender]);
